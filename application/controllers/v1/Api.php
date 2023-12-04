@@ -21,6 +21,8 @@ class Api extends REST_Controller {
     }
 
 
+
+
     public function user_creation_post() {
         $email = $this->input->post('email');
         $password = $this->input->post('password');
@@ -84,6 +86,16 @@ class Api extends REST_Controller {
     }
     
 
+    public function email_detail_get(){
+        $ref_id = $this->input->get('ref_id');
+        $utility = new Utility();
+        return $this->response( $utility->view_lists($ref_id));
+    }
+    public function email_template_list_get(){
+        $ref_id = $this->input->get('ref_id');
+        $utility = new Utility();
+        return $this->response( $utility->emails_list($ref_id));
+    }
 
 
     public function user_login_post(){
@@ -176,6 +188,134 @@ class Api extends REST_Controller {
          return $this->response(array('status_code' => '1', 'message' => 'Department Update error' . $e->getMessage()));
      }
  }
+
+ public function  sending_email_post(){
+    $email = $this->input->post('email');
+    $name = $this->input->post('name');
+    $subj = $this->input->post('subj');
+    $adlink = $this->input->post('adlink');
+    $adcontent = $this->input->post('adcontent');
+    $myadvert = $this->input->post('myadvert');
+    $reflink = $this->input->post('reflink');
+    
+    if ($email !== null) {
+        $email = trim($email);
+    }
+    if ($name !== null) {
+        $name = ucfirst(trim($name));
+    }
+    if ($subj !== null) {
+        $subj = ucfirst(trim($subj));
+    }
+    if ($adlink !== null) {
+        $adlink = trim($adlink);
+    }
+    if ($adcontent !== null) {
+        $adcontent = ucfirst(trim($adcontent));
+    }
+    if ($myadvert !== null) {
+        $myadvert = ucfirst(trim($myadvert));
+    }
+    if ($reflink !== null) {
+        $reflink = trim($reflink);
+    }
+    
+    if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $this->response(array('status_code' => '1', 'message' => 'Provide a valid email address'));
+    }
+    
+    if (empty($name)) {
+        $this->response(array('status_code' => '1', 'message' => 'Name cannot be empty'));
+    }
+    
+    if (empty($subj)) {
+        $this->response(array('status_code' => '1', 'message' => 'Subject  cannot be empty'));
+    }
+
+    if (empty($adlink) ) {
+        $this->response(array('status_code' => '1', 'message' => 'Add link cannot be empty'));
+    }
+
+
+    if (empty($adcontent)) {
+        $this->response(array('status_code' => '1', 'message' => 'Add content  cannot be empty'));
+    }
+    if (empty($myadvert) ) {
+        $this->response(array('status_code' => '1', 'message' => 'My advert cannot be empty'));
+    }
+
+
+    if (empty($reflink)) {
+        $this->response(array('status_code' => '1', 'message' => 'Reference link cannot be empty'));
+    }
+
+  $utility = new Utility();
+  try {
+    $utility = new Utility();
+    return $this->response($utility -> email_sending($email, $name, $subj, $adlink, $adcontent, $myadvert, $reflink));
+  }
+   catch (Exception $e) {
+    $this->response(array('status_code' => '1' ,'message' =>'Payment error'.$e->getMessage()));
+  }
+ }
+ public function  create_email_temps_post(){
+
+    $subj = $this->input->post('subj');
+    $adlink = $this->input->post('adlink');
+    $adcontent = $this->input->post('adcontent');
+    $myadvert = $this->input->post('myadvert');
+    $reflink = $this->input->post('reflink');
+
+    if ($subj !== null) {
+        $subj = ucfirst(trim($subj));
+    }
+    if ($adlink !== null) {
+        $adlink = trim($adlink);
+    }
+    if ($adcontent !== null) {
+        $adcontent = ucfirst(trim($adcontent));
+    }
+    if ($myadvert !== null) {
+        $myadvert = ucfirst(trim($myadvert));
+    }
+    if ($reflink !== null) {
+        $reflink = trim($reflink);
+    }
+    
+    
+    if (empty($subj)) {
+        $this->response(array('status_code' => '1', 'message' => 'Subject  cannot be empty'));
+    }
+
+    if (empty($adlink) ) {
+        $this->response(array('status_code' => '1', 'message' => 'Add link cannot be empty'));
+    }
+
+
+    if (empty($adcontent)) {
+        $this->response(array('status_code' => '1', 'message' => 'Add content  cannot be empty'));
+    }
+    if (empty($myadvert) ) {
+        $this->response(array('status_code' => '1', 'message' => 'My advert cannot be empty'));
+    }
+
+
+    if (empty($reflink)) {
+        $this->response(array('status_code' => '1', 'message' => 'Reference link cannot be empty'));
+    }
+
+  $utility = new Utility();
+  try {
+    $utility = new Utility();
+    return $this->response($utility -> create_email_temp( $subj, $adlink, $adcontent, $myadvert, $reflink));
+  }
+   catch (Exception $e) {
+    $this->response(array('status_code' => '1' ,'message' =>'Payment error'.$e->getMessage()));
+  }
+}
+
+
+ 
      
 // public function generate_token_post(){
 //     $email  = $this->input->post('email'); 

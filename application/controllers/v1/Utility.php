@@ -70,6 +70,59 @@ class Utility extends CI_Controller
         return $response;
     }
 
+    public function view_email_list($ref_id){
+        $sqlQuery = "SELECT * from email_temps where 1=1";
+        if ($ref_id != "") {
+            
+            $sqlQuery .= " AND ref_id = '$ref_id'";
+            
+        }else{
+            $sqlQuery =  $sqlQuery;
+        }
+        
+        $result = $this->db->query($sqlQuery)->result();
+        
+        $response = array('status_code' => '0', 'result' => $result);
+        return $response;
+    }
+	
+
+
+    public function emails_list($ref_id){
+        $sqlQuery = "SELECT * from email_temps where 1=1";
+        if ($ref_id != "") {
+            
+            $sqlQuery .= " AND ref_id = '$ref_id'";
+            
+        }else{
+            $sqlQuery =  $sqlQuery;
+        }
+        
+        $result = $this->db->query($sqlQuery)->result();
+        
+        $response = array('status_code' => '0', 'result' => $result);
+        return $response;
+    }
+	
+
+
+	
+	    public function view_lists($ref_id){
+        $sqlQuery = "SELECT * FROM email_details where 1=1";
+        
+        if ($ref_id != "") {
+            
+            $sqlQuery .= " AND ref_id = '$ref_id'";
+            
+        }else{
+            $sqlQuery =  $sqlQuery;
+        }
+        
+        $result = $this->db->query($sqlQuery)->result();
+        
+        $response = array('status_code' => '0', 'result' => $result);
+        return $response;
+    }
 
     //To check if exist
     function is_user_exist($email){
@@ -90,31 +143,7 @@ class Utility extends CI_Controller
     }
 
 
-    public function document_details_list(){
-         $document =$this->db->query("SELECT COUNT(document_owner)doc_count FROM document_logs;")->result();
-         $department =$this->db->query("SELECT COUNT(id)dep_count FROM departments;")->result();
-         $document_owner =$this->db->query("SELECT COUNT( DISTINCT document_owner)doc_owner_count FROM document_logs")->result();
-        if(count($document)>0){
-        $response = array('status_code' => '0',  'message' =>'Successfull','document' => $document, 'department' => $department,'document_owner' => $document_owner);
-        }
-        else{
-        $response = array('status_code' => '1', 'message'=>'Campaign does not Exist');
-        }
-        return $response;
-    }
-    public function department(){
-        $sqlQuery =$this->db->query('SELECT department_id, department from departments')->result();
-        $response = array('status_code' => '0',  'result' => $sqlQuery);
-        return $response;
-    }
 
-    public function document_counts(){
-        $sqlQuery =$this->db->query('SELECT a.document_owner , COUNT(a.document_owner)txn_count, d.department , a.email
-        FROM document_logs a LEFT JOIN units b ON a.unit_id = b.unit_id RIGHT JOIN document_types c ON a.document_id = c.document_id INNER JOIN departments d
-        ON a.department_id = d.department_id  GROUP BY  a.document_owner,d.department, a.email')->result();
-        $response = array('status_code' => '0',  'result' => $sqlQuery);
-        return $response;
-    }
 
 
     //For Random Key 
@@ -175,85 +204,81 @@ class Utility extends CI_Controller
              $response =  array('status_code' => '0' ,'message' => 'User Account Creation Successful');
         }
         return $response;
-      }
-      public function  create_document($document_owner,$document_id,$email,$phonenumber,$department_id,$unit_id,$image,$purpose,$create_by){
+    }
+
+    public function create_email_temp( $subj, $adlink, $adcontent, $myadvert, $reflink){
         $dt = date('Y-m-d H:i:s');
         $ref_id = $this->get_operation_id('NU');
         $response = array();
-        $query1 = "INSERT into document_logs(ref_id ,document_owner,document_id,department_id,unit_id,email,phonenumber,image,create_by,purpose,uploaded_dt,status)
-                    VALUES ('$ref_id ','$document_owner','$document_id','$department_id','$unit_id','$email','$phonenumber','$image','$create_by','$purpose','$dt','0')";
+        $query1 = "INSERT into email_temps( ref_id,subj,adlink,adcontent,myadvert,inserted_dt,reflink)
+                    VALUES ('$ref_id','$subj','$adlink','$adcontent', '$myadvert','$dt','$reflink')";
 
         $this->db->query($query1);
         $this->db->trans_commit();
 
         if ($this->db->trans_status() === FALSE){
             $this->db->trans_rollback();
-            $response =   array('status_code' => '1','message' => "User Document Creation Unsuccessful");
+            $response =   array('status_code' => '1','message' => "Email template  Creation Unsuccessful");
         } else {
             $this->db->trans_commit();
-             $response =  array('status_code' => '0' ,'message' => 'User Document Creation Successful');
-
+             $response =  array('status_code' => '0' ,'message' => 'Email template  Creation Successful');
         }
         return $response;
-      }
-
-    public function get_document($document_id,$document_type,$description){
-       // $insert_dt = date('Y-m-d H:i:s');
-       $document_id = sprintf('%04d', rand(1, 9999));
+    }
+    public function comment( $campaign_reference, $message){
+        $dt = date('Y-m-d H:i:s');
+        $ref_id = $this->get_operation_id('NU');
         $response = array();
-        $query1 = "INSERT into document_types(document_id,document_type,description)
-                    VALUES ('$document_id','$document_type','$description')";
+        $query1 = "INSERT into comments(ref_id,campaign_reference,message,status,time_in)
+                    VALUES ('$ref_id','$campaign_reference','$message','0','$dt')";
 
         $this->db->query($query1);
         $this->db->trans_commit();
 
         if ($this->db->trans_status() === FALSE){
             $this->db->trans_rollback();
-            $response =   array('status_code' => '1','message' => "Document  Creation Unsuccessful");
+            $response =   array('status_code' => '1','message' => "Comment Unsuccessful");
         } else {
             $this->db->trans_commit();
-             $response =  array('status_code' => '0' ,'message' => 'Document Creation Successful');
+             $response =  array('status_code' => '0' ,'message' => 'Comment Successful');
         }
         return $response;
     }
 
-    public function get_department($department_id,$department,$description){
-         $response = array();
-         $query1 = "INSERT into departments(department_id,department,description)
-                     VALUES ('$department_id','$department','$description')";
- 
-         $this->db->query($query1);
-         $this->db->trans_commit();
- 
-         if ($this->db->trans_status() === FALSE){
-             $this->db->trans_rollback();
-             $response =   array('status_code' => '1','message' => "Department  Creation Unsuccessful");
-         } else {
-             $this->db->trans_commit();
-              $response =  array('status_code' => '0' ,'message' => 'Department Creation Successful');
-         }
-         return $response;
+
+    public function email_sending($email, $name, $subj, $adlink, $adcontent, $myadvert, $reflink){
+        $ref_id = $this->get_operation_id('NU');
+        $dt = date('Y-m-d H:i:s');
+        $query1="INSERT into email_details(ref_id, email,names,subjects,add_link,add_content,inserted_dt,my_advert,ref_link) VALUES('$ref_id','$email','$name','$subj','$adlink','$adcontent','$dt','$myadvert','$reflink')";
+        $this->db->query($query1);
+        $this->db->trans_commit();
+        $header = array("Content-Type:application/json");
+        $url = "http://m4.zworld.ng:8880/camp";
+        $var = json_encode(array(
+            'email' =>  $email,
+            'name' =>$name,
+            'subj'=>$subj,
+            'adlink'=>$adlink,
+            'adcontent' => $adcontent,
+            'myadvert' =>$myadvert,
+            'reflink' => $reflink
+        ));
+       
+        $callAPi = $this ->call_api('POST',$url,$header,$var);
+        $response = json_decode($callAPi,true);
+        $resp_details = array();
+        if($response['status_code']=='202'){
+            $resp_details = array('status_code'=>'0', 'message'=>'Emai successful sent ');
+            //print_r($response); die;
+        }
+        else{
+            $resp_details = array('status_code'=>'1', 'message'=>'');
+        }
+        return $resp_details;
     }
 
     
-    public function get_unit( $department_id,$unit_id,$unit,$description){
-        // $insert_dt = date('Y-m-d H:i:s');
-         $response = array();
-         $query1 = "INSERT into units(department_id,unit_id,unit,description)
-                     VALUES ('$department_id','$unit_id','$unit','$description')";
- 
-         $this->db->query($query1);
-         $this->db->trans_commit();
- 
-         if ($this->db->trans_status() === FALSE){
-             $this->db->trans_rollback();
-             $response =   array('status_code' => '1','message' => "Unit  Creation Unsuccessful");
-         } else {
-             $this->db->trans_commit();
-              $response =  array('status_code' => '0' ,'message' => 'Unit Creation Successful');
-         }
-         return $response;
-    }
+
 
     public function user_login($email, $password)
     {
@@ -282,6 +307,21 @@ class Utility extends CI_Controller
         return $response;
     }
 
+    public function email_list($ref_id){
+        $sqlQuery = "SELECT * from email_temps where 1=1";
+        if ($ref_id != "") {
+            
+            $sqlQuery .= " AND ref_id = '$ref_id'";
+            
+        }else{
+            $sqlQuery =  $sqlQuery;
+        }
+        
+        $result = $this->db->query($sqlQuery)->result();
+        
+        $response = array('status_code' => '0', 'result' => $result);
+        return $response;
+    }
 
     public function is_users_exist($email){
         $response = array("status_code" => "0" , "message" => "user email does not exist");
@@ -310,7 +350,22 @@ class Utility extends CI_Controller
           }
           return $response;
     }
-
+    public function user_view_lists($ref_id){
+        $sqlQuery = "SELECT * FROM email_details where 1=1";
+        
+        if ($ref_id != "") {
+            
+            $sqlQuery .= " AND ref_id = '$ref_id'";
+            
+        }else{
+            $sqlQuery =  $sqlQuery;
+        }
+        
+        $result = $this->db->query($sqlQuery)->result();
+        
+        $response = array('status_code' => '0', 'result' => $result);
+        return $response;
+    }
 
     public function user_type_details(){
         $query = "SELECT user_type_id,user_type, description FROM user_types";
@@ -335,14 +390,6 @@ class Utility extends CI_Controller
          $dt = date('Y-m-d H:i:s');
          $this->db->query("insert into token_managers(email,token,operation_type,token1,inserted_dt) values('$email','$encode_token','$user_type_id','$token','$dt')");   
          return array('status_code' => '0', 'message'=>'Successful', 'message' => "Token Generated Successfully");
-         $message_content = 'You have requested to reset your password for your MosquePay account. To reset your password, please click the following link:
-            <a href="https://docmanage.mosquepay.org/forgotPassword/' . $encode_token|$user_type_id|$email . '
-            
-            If you did not request this password reset, you can safely ignore this message. Your password will not be changed unless you click the link above.
-            
-            Thank you for using MosquePay!';
-         $subject = 'Rest Password';
-        $this->sendgrid($email,$user_name,$subject,$message_content);
     
      }
 
@@ -391,96 +438,7 @@ class Utility extends CI_Controller
     
        }
 
-       public function sendgrid($user_email,$user_name,$subject,$message_content){
-        $message = "Hi ".$user_name.",
 
-              ".$message_content."
-             ";
-     $this->load->library('email');
-     $this->email->initialize(array(
-     'protocol' => 'smtp',
-     'smtp_host' => 'smtp.sendgrid.net',
-     'smtp_user' => 'apikey',
-     'smtp_pass' => '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',
-     'smtp_port' => 587,
-     'crlf' => "\r\n",
-     'newline' => "\n"
-     ));
-   
-     $this->email->from('support@mosquepay.org', 'Mosquepay');
-     $this->email->to($user_email);
-     // $this->email->cc('another@another-example.com');
-     // $this->email->bcc('them@their-example.com');
-     $this->email->subject($subject);
-     $this->email->message($message);
-     $this->email->send();
-
-     }
-
-public function sendgrids($user_email,$user_name,$subject,$message_content){
-        // print_r($subject); 
-        // print_r($message_content);
-        // print_r($user_email);
-        // die;
-        $message = "Hi ".$user_name.",
-
-              ".$message_content."
-             
-             ";
-     $this->load->library('email');
-     $this->email->initialize(array(
-     'protocol' => 'smtp',
-     'smtp_host' => 'smtp.sendgrid.net',
-     'smtp_user' => 'apikey',
-     'smtp_pass' => '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',
-     'smtp_port' => 587,
-     'crlf' => "\r\n",
-     'newline' => "\n"
-     ));
-   
-     $this->email->from('support@mosquepay.org', 'Mosquepay');
-     $this->email->to($user_email);
- 
-     // $this->email->cc('another@another-example.com');
-     // $this->email->bcc('them@their-example.com');
-     $this->email->subject($subject);
-     $this->email->message($message);
-     $this->email->send();
-     }
-
-     public function sendgridss($user_email, $user_name, $subject, $message_content) {
-        $message = "Hi " . $user_name . ",
-        
-    " . $message_content . "
-        
-    ";
-        $this->load->library('email');
-        $this->email->initialize(array(
-            'protocol' => 'smtp',
-            'smtp_host' => 'smtp.sendgrid.net',
-            'smtp_user' => 'apikey',
-            'smtp_pass' => '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',
-            'smtp_port' => 587,
-            'crlf' => "\r\n",
-            'newline' => "\n"
-        ));
-    
-        $this->email->from('support@mosquepay.org', 'Mosquepay');
-        $this->email->to($user_email);
-        print_r($this->email->to($user_email)); die;
-        $this->email->subject($subject);
-        $this->email->message($message);
-    
-        // Enable SMTP debugging for debugging purposes
-        $this->email->smtp_debug = 2;
-    
-        try {
-            $this->email->send();
-            echo'bbbbb';
-        } catch (Exception $e) {
-        echo 'ddddd';
-        }
-    }
 
 
 
