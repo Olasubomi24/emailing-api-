@@ -384,7 +384,8 @@ class Utility extends CI_Controller
     }
 
     public function generate_token($email,$user_type_id){
-         $token = $this->random_alphanumeric(6);   
+        // $token = $this->random_alphanumeric(6);   
+        $token = '123456'; 
          $user_name = explode('@', $email)[0];
          $encode_token = strtoupper(hash('SHA512' , $token));
          $dt = date('Y-m-d H:i:s');

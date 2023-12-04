@@ -317,96 +317,96 @@ class Api extends REST_Controller {
 
  
      
-// public function generate_token_post(){
-//     $email  = $this->input->post('email'); 
-//     $user_type_id  =  trim($this->input->post('user_type_id'));  // SECURITY-ANSWER , PIN, UNLOCK, BVN-UPDATE  -->
-//     //$operation_type  =  'FORGET-PASSWORD'; 
-//     if ($email !== null) {
-//         $email = trim($email);
-//     }
-//     $email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
+public function generate_token_post(){
+    $email  = $this->input->post('email'); 
+    $user_type_id  =  trim($this->input->post('user_type_id'));  // SECURITY-ANSWER , PIN, UNLOCK, BVN-UPDATE  -->
+    //$operation_type  =  'FORGET-PASSWORD'; 
+    if ($email !== null) {
+        $email = trim($email);
+    }
+    $email_pattern = '/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/';
       
-//     if ($email === '' || !preg_match($email_pattern, $email)) {
-//       $this->response(array('status_code' => '1', 'message' => 'Provide a valid email address'));
-//     }
+    if ($email === '' || !preg_match($email_pattern, $email)) {
+      $this->response(array('status_code' => '1', 'message' => 'Provide a valid email address'));
+    }
 
   
-//     if ($user_type_id == '' )  {
-//         $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( user_type_id )'));
-//     }
+    if ($user_type_id == '' )  {
+        $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( user_type_id )'));
+    }
 
-//     $utility = new Utility();
-//  //     $check_email = $utility->is_emailanduser_type_exist($email,$user_type_id);
-//  //     if( $check_email['status_code'] != '1'){
-//  //        $this->response(array('status_code'=>$check_email['status_code'] ,  'message'=>$check_email['message']));
-//  //    }
-//     try { 
-//         $response = $utility->generate_token($email,$user_type_id);
+    $utility = new Utility();
+ //     $check_email = $utility->is_emailanduser_type_exist($email,$user_type_id);
+ //     if( $check_email['status_code'] != '1'){
+ //        $this->response(array('status_code'=>$check_email['status_code'] ,  'message'=>$check_email['message']));
+ //    }
+    try { 
+        $response = $utility->generate_token($email,$user_type_id);
        
-//         $this->response($response);
+        $this->response($response);
         
-//      } catch (Exception $e) {
-//           $this->response(array('status_code' => '1' ,'message' =>'Generate Token Error '.$e->getMessage()));
+     } catch (Exception $e) {
+          $this->response(array('status_code' => '1' ,'message' =>'Generate Token Error '.$e->getMessage()));
    
-//       }
+      }
 
-// }
+}
      
-// public function forget_password_post(){
-//     $email  = $this->input->post('email'); 
-//     $password =  $this->input->post('password'); 
-//     $token =  trim($this->input->post('token')); 
-//     $user_type_id =  trim($this->input->post('user_type_id')); 
+public function forget_password_post(){
+    $email  = $this->input->post('email'); 
+    $password =  $this->input->post('password'); 
+    $token =  trim($this->input->post('token')); 
+    $user_type_id =  trim($this->input->post('user_type_id')); 
 
-//     if ($email !== null) {
-//         $email = trim($email);
-//     }
+    if ($email !== null) {
+        $email = trim($email);
+    }
     
-//     if ($user_type_id !== null) {
-//         $user_type_id = trim($user_type_id);
-//     }
-//     if ($password !== null) {
-//         $password = trim($password);
-//     }
-//     if ($token !== null) {
-//         $phonenumber = trim($token);
-//     }
+    if ($user_type_id !== null) {
+        $user_type_id = trim($user_type_id);
+    }
+    if ($password !== null) {
+        $password = trim($password);
+    }
+    if ($token !== null) {
+        $phonenumber = trim($token);
+    }
   
 
-//     $utility = new Utility();
+    $utility = new Utility();
 
-//     if ($email == '')  {
-//         $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( Email )'));
-//     }
-//     if ($user_type_id == '')  {
-//         $this->response(array('status_code' => '1','message' =>'Provide the User type '));
-//     }
+    if ($email == '')  {
+        $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( Email )'));
+    }
+    if ($user_type_id == '')  {
+        $this->response(array('status_code' => '1','message' =>'Provide the User type '));
+    }
       
-//     if ($token == '')  {
-//         $this->response(array('status_code' => '1','message' =>'Provide the security_token'));
-//     }
+    if ($token == '')  {
+        $this->response(array('status_code' => '1','message' =>'Provide the security_token'));
+    }
   
-//     if ($password == '')  {
-//         $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( password )'));
-//     }
-//     $val =  $utility->confirm_token($email, $token, $user_type_id);
+    if ($password == '')  {
+        $this->response(array('status_code' => '1' , 'message' =>'Provide Request Parameters ( password )'));
+    }
+    $val =  $utility->confirm_token($email, $token, $user_type_id);
     
-//     if (  $val['status_code']  !== '0')  {
-//         $this->response(array('status_code' => '1' , 'message' =>$val['message']));
-//     }
+    if (  $val['status_code']  !== '0')  {
+        $this->response(array('status_code' => '1' , 'message' =>$val['message']));
+    }
 
-//      $response = $utility->forget_password($email, $password, $user_type_id ); 
+     $response = $utility->forget_password($email, $password, $user_type_id ); 
           
-//      if ($response){
+     if ($response){
               
                
-//          $this->response(array('status_code' => '0', 'message' => 'Account Updated Successfully'));
-//      }else{
+         $this->response(array('status_code' => '0', 'message' => 'Account Updated Successfully'));
+     }else{
               
-//        $this->response(array('status_code' => '1', 'message' => 'Account Update Failed'));
+       $this->response(array('status_code' => '1', 'message' => 'Account Update Failed'));
     
-//     }          
-// }
+    }          
+}
    
     
 
