@@ -80,12 +80,15 @@ class Api extends REST_Controller {
 
 
     
+    public function get_lists_get(){
+        $utility = new Utility();
+        return $this->response( $utility->get_list());
+    }
+    
     public function user_lists_get(){
         $utility = new Utility();
         return $this->response( $utility->user_list());
     }
-    
-
     public function email_detail_get(){
         $ref_id = $this->input->get('ref_id');
         $utility = new Utility();
@@ -315,7 +318,146 @@ class Api extends REST_Controller {
 }
 
 
+//   public function update_email_temps_post($id) {
+//     // var_dump($id); // Debugging line to check $id
  
+//      // Retrieve department and description from the request
+//      $id = $this->input->post('id');
+//      $subj = $this->input->post('subj');
+//      $adlink = $this->input->post('adlink');
+//      $adcontent = $this->input->post('adcontent');
+//      $myadvert = $this->input->post('myadvert');
+//      $reflink = $this->input->post('reflink');
+ 
+//      if ($subj !== null) {
+//         $subj = ucfirst(trim($subj));
+//     }
+//     if ($adlink !== null) {
+//         $adlink = trim($adlink);
+//     }
+//     if ($adcontent !== null) {
+//         $adcontent = ucfirst(trim($adcontent));
+//     }
+//     if ($myadvert !== null) {
+//         $myadvert = ucfirst(trim($myadvert));
+//     }
+//     if ($reflink !== null) {
+//         $reflink = trim($reflink);
+//     }
+    
+//     if (empty($id)) {
+//         $this->response(array('status_code' => '1', 'message' => 'ID cannot be empty'));
+//     }
+
+    
+//     if (empty($subj)) {
+//         $this->response(array('status_code' => '1', 'message' => 'Subject  cannot be empty'));
+//     }
+
+//     if (empty($adlink) ) {
+//         $this->response(array('status_code' => '1', 'message' => 'Add link cannot be empty'));
+//     }
+
+
+//     if (empty($adcontent)) {
+//         $this->response(array('status_code' => '1', 'message' => 'Add content  cannot be empty'));
+//     }
+//     if (empty($myadvert) ) {
+//         $this->response(array('status_code' => '1', 'message' => 'My advert cannot be empty'));
+//     }
+
+
+//     if (empty($reflink)) {
+//         $this->response(array('status_code' => '1', 'message' => 'Reference link cannot be empty'));
+//     }
+ 
+//      // Instantiate your Utility class
+//      $utility = new Utility();
+ 
+//      // Check if the department name already exists
+//      $check_department_name = $utility->if_id_exist($id);
+ 
+//      if ($check_department_name['status_code'] == '1') {
+//          return $this->response(array('status_code' => $check_department_name['status_code'], 'message' => $check_department_name['message']));
+//      }
+
+//      try {
+//        return $this->response($utility -> update_email_temp($id, $subj, $adlink, $adcontent, $myadvert, $reflink));
+//      }
+//       catch (Exception $e) {
+//        $this->response(array('status_code' => '1' ,'message' =>'Payment error'.$e->getMessage()));
+//      }
+// }
+public function update_email_temps_post() {
+    // Retrieve data from the POST request
+    $id = $this->input->post('id');
+    $subj = $this->input->post('subj');
+    $adlink = $this->input->post('adlink');
+    $adcontent = $this->input->post('adcontent');
+    $myadvert = $this->input->post('myadvert');
+    $reflink = $this->input->post('reflink');
+
+    // ... your validation and processing code
+    if ($subj !== null) {
+        $subj = ucfirst(trim($subj));
+    }
+    if ($adlink !== null) {
+        $adlink = trim($adlink);
+    }
+    if ($adcontent !== null) {
+        $adcontent = ucfirst(trim($adcontent));
+    }
+    if ($myadvert !== null) {
+        $myadvert = ucfirst(trim($myadvert));
+    }
+    if ($reflink !== null) {
+        $reflink = trim($reflink);
+    }
+    
+    if (empty($id)) {
+        $this->response(array('status_code' => '1', 'message' => 'ID cannot be empty'));
+    }
+
+    
+    if (empty($subj)) {
+        $this->response(array('status_code' => '1', 'message' => 'Subject  cannot be empty'));
+    }
+
+    if (empty($adlink) ) {
+        $this->response(array('status_code' => '1', 'message' => 'Add link cannot be empty'));
+    }
+
+
+    if (empty($adcontent)) {
+        $this->response(array('status_code' => '1', 'message' => 'Add content  cannot be empty'));
+    }
+    if (empty($myadvert) ) {
+        $this->response(array('status_code' => '1', 'message' => 'My advert cannot be empty'));
+    }
+
+
+    if (empty($reflink)) {
+        $this->response(array('status_code' => '1', 'message' => 'Reference link cannot be empty'));
+    }
+ 
+
+    try {
+        // Instantiate your Utility class
+        $utility = new Utility();
+
+        // Check if the department name already exists
+        $check_department_name = $utility->if_id_exist($id);
+
+        if ($check_department_name['status_code'] == '1') {
+            return $this->response(array('status_code' => $check_department_name['status_code'], 'message' => $check_department_name['message']));
+        }
+
+        return $this->response($utility->update_email_temp($id, $subj, $adlink, $adcontent, $myadvert, $reflink));
+    } catch (Exception $e) {
+        $this->response(array('status_code' => '1', 'message' => 'Error: ' . $e->getMessage()));
+    }
+}
+
      
 public function generate_token_post(){
     $email  = $this->input->post('email'); 

@@ -225,25 +225,7 @@ class Utility extends CI_Controller
         }
         return $response;
     }
-    public function comment( $campaign_reference, $message){
-        $dt = date('Y-m-d H:i:s');
-        $ref_id = $this->get_operation_id('NU');
-        $response = array();
-        $query1 = "INSERT into comments(ref_id,campaign_reference,message,status,time_in)
-                    VALUES ('$ref_id','$campaign_reference','$message','0','$dt')";
 
-        $this->db->query($query1);
-        $this->db->trans_commit();
-
-        if ($this->db->trans_status() === FALSE){
-            $this->db->trans_rollback();
-            $response =   array('status_code' => '1','message' => "Comment Unsuccessful");
-        } else {
-            $this->db->trans_commit();
-             $response =  array('status_code' => '0' ,'message' => 'Comment Successful');
-        }
-        return $response;
-    }
 
 
     public function email_sending($email, $name, $subj, $adlink, $adcontent, $myadvert, $reflink){
@@ -304,6 +286,15 @@ class Utility extends CI_Controller
         ON a.user_type_id = b.user_type_id WHERE STATUS = '0'";
         $result = $this->db->query($query)->result();
         $response = array('status_code' => 0, 'message'=>'Successful', 'result' => $result);
+        return $response;
+    }
+
+    public function get_list(){
+        $query = "SELECT COUNT(ref_id) txn_cont FROM email_details ";
+        $total_email_sent = $this->db->query($query)->result();
+        $total_user = $this->db->query("SELECT COUNT(ref_id) txn_cont FROM user_accounts  ")->result();
+        $total_template_create = $this->db->query("SELECT COUNT(ref_id) txn_cont FROM email_temps")->result();
+        $response = array('status_code' => 0, 'message'=>'Successful', 'total_email_sent' => $total_email_sent,'total_user' => $total_user,'total_template_create' => $total_template_create);
         return $response;
     }
 
@@ -439,6 +430,33 @@ class Utility extends CI_Controller
     
        }
 
+
+       public function if_id_exist($id){
+        $response = array("status_code" => "1" , "message" => "Department name not found");
+        $query = $this->db->query("select id from email_temps where id = '$id'")->result_array();
+        if ( sizeof($query ) > 0){
+            $response = array("status_code" => "0" , "message" => "Such Department name already exist, Kindly choose another name");  
+        }
+        return $response;
+    }
+
+
+    public function update_email_temp( $id,$subj, $adlink, $adcontent, $myadvert, $reflink){
+        $response = array();
+        $query1 = "UPDATE email_temps SET subj='$subj', adlink = '$adlink' AND adcontent = '$adcontent',myadvert = '$myadvert' AND reflink = '$reflink' WHERE id = '$id' ";
+
+        $this->db->query($query1);
+        $this->db->trans_commit();
+
+        if ($this->db->trans_status() === FALSE){
+            $this->db->trans_rollback();
+            $response =   array('status_code' => '1','message' => "it was not updated Uunsuccessful");
+        } else {
+            $this->db->trans_commit();
+             $response =  array('status_code' => '0' ,'message' => 'It was update successful');
+        }
+        return $response;
+   }
 
 
 
