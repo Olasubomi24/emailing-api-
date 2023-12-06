@@ -443,7 +443,7 @@ class Utility extends CI_Controller
 
     public function update_email_temp( $id,$subj, $adlink, $adcontent, $myadvert, $reflink){
         $response = array();
-        $query1 = "UPDATE email_temps SET subj='$subj', adlink = '$adlink' AND adcontent = '$adcontent',myadvert = '$myadvert' AND reflink = '$reflink' WHERE id = '$id' ";
+        $query1 = "UPDATE email_temps SET subj='$subj', adlink = '$adlink' , adcontent = '$adcontent',myadvert = '$myadvert' , reflink = '$reflink' WHERE id = '$id' ";
 
         $this->db->query($query1);
         $this->db->trans_commit();
